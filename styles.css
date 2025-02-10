@@ -11,7 +11,11 @@
 /* Container que organiza os elementos */
 .container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Duas colunas */
+  grid-template-columns: 1fr 1fr; /* Duas colunas */
+  grid-template-areas: 
+    "text1 image3"
+    "text2 image1"
+    "text3 image2"; /* Definindo as áreas de cada item */
   grid-gap: 15px; /* Espaçamento maior entre os elementos */
   padding: 15px;
   max-width: 1200px; /* Limita a largura máxima */
@@ -47,3 +51,27 @@
   border-radius: 8px; /* Bordas arredondadas na imagem */
 }
 
+/* Posicionando as caixas de texto e imagens */
+.text-box:nth-child(1) {
+  grid-area: text1; /* Primeira caixa de texto */
+}
+
+.text-box:nth-child(2) {
+  grid-area: text2; /* Segunda caixa de texto */
+}
+
+.text-box:nth-child(3) {
+  grid-area: text3; /* Terceira caixa de texto */
+}
+
+.image:nth-child(4) {
+  grid-area: image1; /* Primeira imagem */
+}
+
+.image:nth-child(5) {
+  grid-area: image2; /* Segunda imagem */
+}
+
+.image:nth-child(6) {
+  grid-area: image3; /* Terceira imagem */
+}
