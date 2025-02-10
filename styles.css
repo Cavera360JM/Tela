@@ -21,7 +21,7 @@
 .text-box {
   border: 1px solid #ccc;
   padding: 15px;
-  max-width: 150px; /* Limita a largura da text-box */
+  max-width: 200px; /* Limita a largura da text-box */
   margin: 0 auto; /* Centraliza as text-box */
 }
 
