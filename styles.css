@@ -1,28 +1,36 @@
+/* Estilo para o cabeçalho */
 .header {
   padding: 15px;
-  background-color: #f0f0f0; /* Light gray background */
-  text-align: center; /* Centralizar o texto */
+  background-color: #f0f0f0; /* Fundo cinza claro */
+  text-align: center; /* Centraliza o texto */
   border-bottom: 1px solid #ccc; /* Linha inferior sutil */
-  cursor: pointer; /* Indicar que é editável */
+  cursor: pointer; /* Indica que é editável */
 }
 
+/* Estilo do container que contém os elementos */
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
-  grid-gap: 20px; /* Spacing between elements */
+  grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+  grid-gap: 20px; /* Espaçamento entre os elementos */
   padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para dar efeito de tabela */
+  background-color: #fff; /* Fundo branco */
 }
 
+/* Estilo para as caixas de texto */
 .text-box {
   border: 1px solid #ccc;
   padding: 10px;
+  max-width: 250px; /* Limita a largura da text-box */
+  margin: 0 auto; /* Centraliza as text-box */
 }
 
+/* Estilo para as imagens */
 .image {
-  text-align: center; /* Center the image */
+  text-align: center; /* Centraliza a imagem */
 }
 
 .image img {
-  max-width: 100%; /* Make image responsive */
+  max-width: 100%; /* Torna a imagem responsiva */
   height: auto;
 }
