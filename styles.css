@@ -1,14 +1,9 @@
-.menu {
-  display: flex;
-  justify-content: space-around; /* Distribute space around items */
-  padding: 10px;
+.header {
+  padding: 15px;
   background-color: #f0f0f0; /* Light gray background */
-}
-
-.menu-item {
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  cursor: pointer; /* Indicate it's editable */
+  text-align: center; /* Centralizar o texto */
+  border-bottom: 1px solid #ccc; /* Linha inferior sutil */
+  cursor: pointer; /* Indicar que é editável */
 }
 
 .container {
@@ -27,6 +22,10 @@
   text-align: center; /* Center the image */
 }
 
+.image img {
+  max-width: 100%; /* Make image responsive */
+  height: auto;
+}
 .image img {
   max-width: 100%; /* Make image responsive */
   height: auto;
