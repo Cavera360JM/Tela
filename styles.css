@@ -1,32 +1,37 @@
+body {
+  font-family: sans-serif; /* Fonte mais moderna */
+  margin: 0; /* Remove margens padrão */
+}
+
 .header {
-  padding: 15px;
-  background-color: #f0f0f0; /* Light gray background */
-  text-align: center; /* Centralizar o texto */
-  border-bottom: 1px solid #ccc; /* Linha inferior sutil */
-  cursor: pointer; /* Indicar que é editável */
+  padding: 20px;
+  background-color: #f0f0f0;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
 }
 
 .container {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
-  grid-gap: 5px; /* Spacing between elements */
-  padding: 5px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsivo */
+  grid-gap: 20px;
+  padding: 20px;
+  max-width: 960px; /* Largura máxima */
+  margin: 0 auto; /* Centralizar o container */
 }
 
 .text-box {
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9; /* Fundo mais claro */
 }
 
 .image {
-  text-align: center; /* Center the image */
+  text-align: center;
 }
 
 .image img {
-  max-width: 100%; /* Make image responsive */
-  height: auto;
-}
-.image img {
-  max-width: 100%; /* Make image responsive */
-  height: auto;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* Sombra na imagem */
 }
