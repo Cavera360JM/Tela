@@ -1,20 +1,33 @@
+.menu {
+  display: flex;
+  justify-content: space-around; /* Distribute space around items */
+  padding: 10px;
+  background-color: #f0f0f0; /* Light gray background */
+}
+
+.menu-item {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  cursor: pointer; /* Indicate it's editable */
+}
+
 .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    grid-gap: 20px; /* Spacing between elements */
-    padding: 20px;
-  }
-  
-  .text-box {
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-  
-  .image {
-    text-align: center; /* Center the image */
-  }
-  
-  .image img {
-    max-width: 100%; /* Make image responsive */
-    height: auto;
-  }
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-gap: 20px; /* Spacing between elements */
+  padding: 20px;
+}
+
+.text-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.image {
+  text-align: center; /* Center the image */
+}
+
+.image img {
+  max-width: 100%; /* Make image responsive */
+  height: auto;
+}
