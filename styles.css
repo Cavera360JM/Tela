@@ -20,8 +20,8 @@
 /* Estilo para as caixas de texto */
 .text-box {
   border: 1px solid #ccc;
-  padding: 10px;
-  max-width: 250px; /* Limita a largura da text-box */
+  padding: 5px;
+  max-width: 50px; /* Limita a largura da text-box */
   margin: 0 auto; /* Centraliza as text-box */
 }
 
