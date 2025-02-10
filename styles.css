@@ -1,0 +1,20 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    grid-gap: 20px; /* Spacing between elements */
+    padding: 20px;
+  }
+  
+  .text-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .image {
+    text-align: center; /* Center the image */
+  }
+  
+  .image img {
+    max-width: 100%; /* Make image responsive */
+    height: auto;
+  }
