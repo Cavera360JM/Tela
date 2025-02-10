@@ -9,8 +9,8 @@
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Two equal columns */
-  grid-gap: 20px; /* Spacing between elements */
-  padding: 20px;
+  grid-gap: 5px; /* Spacing between elements */
+  padding: 5px;
 }
 
 .text-box {
