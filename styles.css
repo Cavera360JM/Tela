@@ -14,13 +14,13 @@
   grid-gap: 20px; /* Espaçamento entre os elementos */
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 1.8); /* Sombra para dar efeito de tabela */
-  background-color: black; /* Fundo branco */
+  background-color: #fff; /* Fundo branco */
 }
 
 /* Estilo para as caixas de texto */
 .text-box {
   border: 1px solid #ccc;
-  padding: 5px;
+  padding: 15px;
   max-width: 150px; /* Limita a largura da text-box */
   margin: 0 auto; /* Centraliza as text-box */
 }
