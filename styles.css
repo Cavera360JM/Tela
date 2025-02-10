@@ -1,77 +1,28 @@
-/* Estilo do cabeçalho */
 .header {
   padding: 15px;
-  background-color: #f0f0f0; /* Fundo cinza claro */
+  background-color: #f0f0f0; /* Light gray background */
   text-align: center; /* Centralizar o texto */
   border-bottom: 1px solid #ccc; /* Linha inferior sutil */
   cursor: pointer; /* Indicar que é editável */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
-/* Container que organiza os elementos */
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Duas colunas */
-  grid-template-areas: 
-    "text1 image3"
-    "text2 image1"
-    "text3 image2"; /* Definindo as áreas de cada item */
-  grid-gap: 15px; /* Espaçamento maior entre os elementos */
-  padding: 15px;
-  max-width: 1200px; /* Limita a largura máxima */
-  margin: 0 auto; /* Centraliza o container */
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-gap: 20px; /* Spacing between elements */
+  padding: 20px;
 }
 
-/* Caixa de texto com sombra e borda */
 .text-box {
   border: 1px solid #ccc;
   padding: 10px;
-  min-height: 100px; /* Tamanho mínimo */
-  max-width: 100%; /* Limita a largura */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  border-radius: 8px; /* Bordas arredondadas */
-  background-color: #ffffff; /* Fundo branco */
-  font-family: Arial, sans-serif;
-  font-size: 14px;
 }
 
-/* Imagens centralizadas com sombra */
 .image {
-  text-align: center; /* Centralizar a imagem */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  border-radius: 8px; /* Bordas arredondadas */
-  overflow: hidden; /* Esconde partes da imagem que saem da borda */
+  text-align: center; /* Center the image */
 }
 
-/* Imagens responsivas */
 .image img {
-  max-width: 100%; /* Torna a imagem responsiva */
+  max-width: 100%; /* Make image responsive */
   height: auto;
-  display: block;
-  border-radius: 8px; /* Bordas arredondadas na imagem */
-}
-
-/* Posicionando as caixas de texto e imagens */
-.text-box:nth-child(1) {
-  grid-area: text1; /* Primeira caixa de texto */
-}
-
-.text-box:nth-child(2) {
-  grid-area: text2; /* Segunda caixa de texto */
-}
-
-.text-box:nth-child(3) {
-  grid-area: text3; /* Terceira caixa de texto */
-}
-
-.image:nth-child(4) {
-  grid-area: image1; /* Primeira imagem */
-}
-
-.image:nth-child(5) {
-  grid-area: image2; /* Segunda imagem */
-}
-
-.image:nth-child(6) {
-  grid-area: image3; /* Terceira imagem */
 }
