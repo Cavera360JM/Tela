@@ -13,7 +13,7 @@
   grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
   grid-gap: 20px; /* Espaçamento entre os elementos */
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8); /* Sombra para dar efeito de tabela */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 1.8); /* Sombra para dar efeito de tabela */
   background-color: #fff; /* Fundo branco */
 }
 
