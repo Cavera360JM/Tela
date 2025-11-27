@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+
+    {% if ultimo %}
+        <section class="card latest-entry">
+            <div class="card-header">
+                <h2>Última entrada — {{ ultimo.date|formatar_data_br }} ({{ ultimo.date|obter_dia_semana }})</h2>
+                <a href="{{ url_for('diario', dia=ultimo.date) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+            </div>
+
+            {% if ultimo.data.photo_url %}
+                <div class="entry-photo">
+                    <img src="{{ ultimo.data.photo_url }}" alt="Foto do dia" class="photo-day">
+                </div>
+            {% endif %}
+
+            <div class="entry-preview">
+                <div class="preview-section">
+                    <h3><i class="fas fa-book"></i> Journal</h3>
+                    <p>{{ ultimo.data.journal[:200] }}{% if ultimo.data.journal|length > 200 %}...{% endif %}</p>
+                </div>
+
+                {% if ultimo.data.rotina %}
+                    <div class="preview-section">
+                        <h3><i class="fas fa-tasks"></i> Rotina</h3>
+                        <p>{{ ultimo.data.rotina[:200] }}{% if ultimo.data.rotina|length > 200 %}...{% endif %}</p>
+                    </div>
+                {% endif %}
+
+                {% if ultimo.data.emocoes %}
+                    <div class="preview-section">
+                        <h3><i class="fas fa-smile"></i> Emoções</h3>
+                        <div class="tags-list">
+                            {% for emocao in ultimo.data.emocoes %}
+                                <span class="tag">{{ emocao }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ultimo.data.habilidades %}
+                    <div class="preview-section">
+                        <h3><i class="fas fa-star"></i> Habilidades Desenvolvidas</h3>
+                        <div class="tags-list">
+                            {% for hab in ultimo.data.habilidades %}
+                                <span class="tag tag-skill">{{ hab }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ultimo.data.checklist %}
+                    <div class="preview-section">
+                        <h3><i class="fas fa-check-square"></i> Checklist</h3>
+                        <ul class="checklist-preview">
+                            {% for item in ultimo.data.checklist[:5] %}
+                                <li {% if item.feito %}class="done"{% endif %}>
+                                    <i class="fas {% if item.feito %}fa-check-circle{% else %}fa-circle{% endif %}"></i>
+                                    {{ item.texto }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% if ultimo.data.checklist|length > 5 %}
+                            <p class="text-muted">+ {{ ultimo.data.checklist|length - 5 }} mais itens</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% else %}
+        <div class="card empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhuma entrada ainda.</p>
+            <a href="{{ url_for('diario_hoje') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar entrada de hoje
+            </a>
+        </div>
+    {% endif %}
+
+    <section class="card recent-entries">
+        <h2><i class="fas fa-history"></i> Entradas Recentes</h2>
+        {% if dias %}
+            <div class="grid-days">
+                {% for d in dias %}
+                    <a class="day-card" href="{{ url_for('diario', dia=d.date) }}">
+                        <div class="day-title">{{ d.date|formatar_data_br }}</div>
+                        <div class="day-subtitle">{{ d.date|obter_dia_semana }}</div>
+                        <div class="day-snippet">
+                            {{ d.data.journal[:60] or (d.data.rotina[:60] if d.data.rotina else 'Sem conteúdo') }}
+                        </div>
+                        {% if d.data.emocoes %}
+                            <div class="day-emojis">
+                                {% for emocao in d.data.emocoes[:2] %}
+                                    <span>{{ emocao }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">Comece a escrever para ver seu histórico aqui.</p>
+        {% endif %}
+    </section>
+
+    <section class="card quick-actions">
+        <h2><i class="fas fa-bolt"></i> Ações Rápidas</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('diario_hoje') }}" class="btn btn-lg btn-primary">
+                <i class="fas fa-pen"></i> Editar Diário
+            </a>
+            <a href="{{ url_for('historico') }}" class="btn btn-lg btn-secondary">
+                <i class="fas fa-calendar"></i> Ver Histórico
+            </a>
+            <a href="{{ url_for('analise') }}" class="btn btn-lg btn-info">
+                <i class="fas fa-chart-bar"></i> Análise
+            </a>
+        </div>
+    </section>
+</div>
+
+<style>
+.dashboard {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.entry-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.preview-section {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1rem;
+}
+
+.preview-section h3 {
+    margin-top: 0;
+    color: var(--dark-color);
+}
+
+.grid-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.day-card {
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.day-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.day-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.day-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.day-snippet {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    opacity: 0.95;
+}
+
+.day-emojis {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--light-color);
+    margin-bottom: 1rem;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: var(--light-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.tag-skill {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.checklist-preview {
+    list-style: none;
+    padding: 0;
+}
+
+.checklist-preview li {
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checklist-preview li.done {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #999;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}

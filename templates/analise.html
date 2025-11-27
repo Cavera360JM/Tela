@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+
+{% block title %}Análise - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="analise-page">
+    <h1><i class="fas fa-chart-bar"></i> Análise do Seu Desenvolvimento</h1>
+
+    {% if total_dias > 0 %}
+        <div class="stats-grid">
+            <!-- Estatísticas Principais -->
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <h3>Dias Registrados</h3>
+                    <p class="stat-number">{{ total_dias }}</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h3>Tarefas Concluídas</h3>
+                    <p class="stat-number">{{ tarefas_concluidas }}/{{ total_tarefas }}</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <h3>Taxa de Conclusão</h3>
+                    <p class="stat-number">{{ "%.1f"|format(taxa_conclusao) }}%</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💪</div>
+                <div class="stat-content">
+                    <h3>Habilidades Desenvolvidas</h3>
+                    <p class="stat-number">{{ habilidades_count|length }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO DE TAXA DE CONCLUSÃO -->
+        <section class="chart-section">
+            <h2><i class="fas fa-check-circle"></i> Taxa de Conclusão de Tarefas</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ taxa_conclusao }}%"></div>
+            </div>
+            <p class="progress-text">{{ tarefas_concluidas }} de {{ total_tarefas }} tarefas concluídas</p>
+        </section>
+
+        <!-- EMOÇÕES MAIS FREQUENTES -->
+        {% if emocoes_count %}
+            <section class="chart-section">
+                <h2><i class="fas fa-smile"></i> Emoções Mais Frequentes</h2>
+                <div class="emocoes-chart">
+                    {% for emocao, count in emocoes_count|dictsort(by='value', reverse=True) %}
+                        <div class="emocao-bar">
+                            <div class="emocao-label-chart">
+                                <span>{{ emocoes[emocao] }} {{ emocao|replace('_', ' ')|title }}</span>
+                                <span class="count">{{ count }}x</span>
+                            </div>
+                            <div class="emocao-bar-fill">
+                                <div class="bar" style="width: {{ (count / (emocoes_count.values()|list|max or 1)) * 100 }}%"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <!-- HABILIDADES DESENVOLVIDAS -->
+        {% if habilidades_count %}
+            <section class="chart-section">
+                <h2><i class="fas fa-star"></i> Habilidades em Desenvolvimento</h2>
+                <div class="habilidades-grid-chart">
+                    {% for hab_key, count in habilidades_count|dictsort(by='value', reverse=True) %}
+                        <div class="habilidade-card">
+                            <div class="habilidade-header">
+                                <span class="icone">{{ habilidades[hab_key].icone }}</span>
+                                <span class="nome">{{ habilidades[hab_key].nome }}</span>
+                            </div>
+                            <div class="habilidade-progress">
+                                <div class="progress-bar-skill">
+                                    <div class="progress-fill-skill" style="width: {{ (count / (habilidades_count.values()|list|max or 1)) * 100 }}%"></div>
+                                </div>
+                                <span class="count">{{ count }} vezes</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <!-- RESUMO -->
+        <section class="summary-section">
+            <h2><i class="fas fa-lightbulb"></i> Resumo e Insights</h2>
+            <div class="insights">
+                <p>Você registrou <strong>{{ total_dias }}</strong> dias de reflexão e desenvolvimento pessoal.</p>
+                <p>Sua taxa de conclusão de tarefas é de <strong>{{ "%.1f"|format(taxa_conclusao) }}%</strong>, demonstrando {% if taxa_conclusao >= 80 %}ótima produtividade!{% elif taxa_conclusao >= 60 %}bom progresso. Continue assim!{% elif taxa_conclusao >= 40 %}um bom início, mas há espaço para melhorar.{% else %}potencial para aumentar sua produtividade.{% endif %}</p>
+                {% if habilidades_count %}
+                    <p>Você tem focado em desenvolver <strong>{{ habilidades_count|length }}</strong> habilidades principais, sendo {% set top_hab = habilidades_count|dictsort(by='value', reverse=True)|first %}a <strong>{{ habilidades[top_hab[0]].nome }}</strong> a mais desenvolvida.</p>
+                {% endif %}
+            </div>
+        </section>
+
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-line"></i>
+            <p>Comece a registrar seus dias para ver as análises aqui.</p>
+            <a href="{{ url_for('diario_hoje') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar primeira entrada
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.analise-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analise-page h1 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary-color), #667eea);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.stat-number {
+    margin: 0.5rem 0 0 0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.chart-section {
+    background: var(--card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
+}
+
+.chart-section h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    color: var(--dark-color);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #667eea);
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+
+.progress-text {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.emocoes-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.emocao-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.emocao-label-chart {
+    min-width: 180px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.count {
+    background: var(--light-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.emocao-bar-fill {
+    flex: 1;
+    height: 24px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.habilidades-grid-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.habilidade-card {
+    background: var(--card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #fff3cd;
+}
+
+.habilidade-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.icone {
+    font-size: 1.8rem;
+}
+
+.nome {
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.progress-bar-skill {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill-skill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #f59e0b);
+    transition: width 0.3s ease;
+}
+
+.habilidade-progress .count {
+    display: block;
+    font-size: 0.8rem;
+}
+
+.summary-section {
+    background: var(--card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.summary-section h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.insights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.insights p {
+    line-height: 1.6;
+    color: #555;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: var(--card);
+    border-radius: 8px;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--light-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-state p {
+    color: #999;
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}
+
+{# Seção de gerenciamento (adicionar/editar/excluir) - acessível ao usuário logado #}
+{% block manage_lists %}
+<section class="card">
+    <h2><i class="fas fa-tools"></i> Gerenciar Emoções e Habilidades</h2>
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;margin-top:1rem;">
+        <div style="flex:1;min-width:260px;">
+            <h3>Emoções</h3>
+            <div>
+                <button class="btn" onclick="adicionarEmocao()"><i class="fas fa-plus"></i> Adicionar Emoção</button>
+            </div>
+            <ul style="margin-top:0.75rem;list-style:none;padding:0;">
+                {% for key, emoji in emocoes.items() %}
+                    <li style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04);">
+                        <div>{{ emoji }} <strong>{{ key|replace('_',' ')|title }}</strong></div>
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn btn-sm" onclick="editarEmocao('{{ key }}','{{ emoji }}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm" onclick="deletarEmocao('{{ key }}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="flex:1;min-width:260px;">
+            <h3>Habilidades</h3>
+            <div>
+                <button class="btn" onclick="adicionarHabilidade()"><i class="fas fa-plus"></i> Adicionar Habilidade</button>
+            </div>
+            <ul style="margin-top:0.75rem;list-style:none;padding:0;">
+                {% for key, hab in habilidades.items() %}
+                    <li style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04);">
+                        <div>{{ hab.icone }} <strong>{{ hab.nome }}</strong></div>
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn btn-sm" onclick="editarHabilidade('{{ key }}','{{ hab.nome }}','{{ hab.icone }}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm" onclick="deletarHabilidade('{{ key }}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

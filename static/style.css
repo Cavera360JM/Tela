@@ -1,0 +1,86 @@
+:root{
+	--bg:#f7f8fb;
+	--card:#ffffff;
+	--muted:#6b7280;
+	--accent:#1e88e5; /* azul claro padrão */
+	--primary-color:var(--accent);
+	--dark-color:#111827;
+	--light-color:#ffffff;
+}
+
+/* Tema claro (azul & branco) */
+.theme-light{
+	--bg:#f7f8fb;
+	--card:#ffffff;
+	--muted:#6b7280;
+	--accent:#1e88e5; /* azul */
+	--primary-color:var(--accent);
+	--dark-color:#111827;
+	--light-color:#ffffff;
+}
+
+/* Tema escuro (preto & roxo) */
+.theme-dark{
+	--bg:#050507;
+	--card:#0b0b10;
+	--muted:#9ca3af;
+	--accent:#8b5cf6; /* roxo */
+	--primary-color:var(--accent);
+	--dark-color:#e6e6fa;
+	--light-color:#0b0b10;
+}
+*{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+body{background:var(--bg);margin:0;color:var(--dark-color);transition:background 0.2s,color 0.2s}
+.site-header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--card);box-shadow:0 1px 0 rgba(0,0,0,0.05)}
+.site-header .logo{font-weight:700}
+.site-header nav a{margin-left:12px;text-decoration:none;color:var(--muted)}
+.container{max-width:940px;margin:20px auto;padding:0 16px}
+.card{background:var(--card);padding:16px;border-radius:8px;margin-bottom:16px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
+.grid-days{display:flex;gap:12px;flex-wrap:wrap}
+.day-card{display:block;padding:12px;background:rgba(0,0,0,0.03);border-radius:8px;text-decoration:none;color:inherit;width:140px}
+.photo-day{max-width:100%;border-radius:6px;margin-top:8px}
+.check-item{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.check-item input[type=text]{flex:1;padding:8px}
+.actions{display:flex;gap:8px}
+.actions button{padding:8px 12px;background:var(--primary-color);color:var(--light-color);border:none;border-radius:6px}
+.auth-page{display:flex;height:100vh;align-items:center;justify-content:center}
+.auth-card{background:var(--card);padding:20px;border-radius:8px;width:320px}
+.flash-list .flash{padding:8px;margin-bottom:8px;border-radius:6px}
+.flash.success{background:rgba(34,197,94,0.12)}
+.flash.danger{background:rgba(239,68,68,0.12)}
+.done{text-decoration:line-through;opacity:0.7}
+
+/* header styles: theme toggle look */
+.nav-link.theme-toggle{background:transparent;border:none;color:var(--muted);cursor:pointer;margin-left:8px;padding:6px;border-radius:6px}
+.nav-link.theme-toggle:hover{background:rgba(0,0,0,0.04)}
+
+/* Input / form styles using variables so they adapt to theme */
+:root{
+	--border:#dddddd;
+	--input-bg:#ffffff;
+}
+.theme-dark{
+	--border: rgba(255,255,255,0.06);
+	--input-bg: #0f0f14; /* slightly lighter than card */
+}
+
+input[type="text"], input[type="url"], input[type="email"], textarea, select {
+	background: var(--input-bg);
+	color: var(--dark-color);
+	border: 1px solid var(--border);
+	padding: 0.6rem;
+	border-radius: 6px;
+	outline: none;
+	transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+textarea.form-textarea { background: var(--input-bg); }
+
+/* make subtle shadows adapt to theme */
+.card { box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+.theme-dark .card { box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+
+/* ensure section blocks use card color by default (templates may use var(--card)) */
+.diario-section, .chart-section, .summary-section, .stat-card, .empty-state, .auth-card {
+	background: var(--card) !important;
+}

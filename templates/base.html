@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bloco de Notas Interativo{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-book"></i> BlocoNotion
+            </div>
+            <nav class="navbar">
+                {% if session.logged_in %}
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('diario_hoje') }}" class="nav-link">
+                        <i class="fas fa-pen"></i> Diário Hoje
+                    </a>
+                    <a href="{{ url_for('historico') }}" class="nav-link">
+                        <i class="fas fa-history"></i> Histórico
+                    </a>
+                    <a href="{{ url_for('analise') }}" class="nav-link">
+                        <i class="fas fa-chart-bar"></i> Análise
+                    </a>
+                    <div class="nav-user">
+                        <img src="{{ session.user_foto }}" alt="{{ session.user_nome }}" class="user-avatar">
+                        <span class="user-name">{{ session.user_nome }}</span>
+                    </div>
+                    <!-- Theme toggle -->
+                    <button id="theme-toggle" title="Alternar tema" class="nav-link theme-toggle">
+                        <i id="theme-icon" class="fas fa-moon"></i>
+                    </button>
+                    <a href="{{ url_for('logout') }}" class="nav-link logout">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}" role="alert">
+                            <button class="flash-close" onclick="this.parentElement.style.display='none';">&times;</button>
+                            <strong>{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Bloco de Notas Interativo. Desenvolvido com <i class="fas fa-heart"></i> para você.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='diario.js') }}"></script>
+    <script>
+        // Inicializa tema a partir do localStorage (theme: 'light' | 'dark')
+        (function(){
+            function applyTheme(name){
+                document.body.classList.remove('theme-light','theme-dark');
+                if(name === 'dark') document.body.classList.add('theme-dark');
+                else document.body.classList.add('theme-light');
+                var icon = document.getElementById('theme-icon');
+                if(icon) icon.className = (name === 'dark') ? 'fas fa-sun' : 'fas fa-moon';
+                localStorage.setItem('bloconotion_theme', name);
+            }
+            var saved = localStorage.getItem('bloconotion_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(saved);
+
+            var btn = document.getElementById('theme-toggle');
+            if(btn){
+                btn.addEventListener('click', function(){
+                    var cur = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
+                    applyTheme(cur === 'dark' ? 'light' : 'dark');
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

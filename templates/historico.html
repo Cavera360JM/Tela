@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="historico-page">
+    <h1><i class="fas fa-calendar-alt"></i> Histórico de Entradas</h1>
+
+    {% if historico_items %}
+        <div class="historico-container">
+            {% for item in historico_items %}
+                <div class="historico-card">
+                    <div class="card-header">
+                        <h2>
+                            <a href="{{ url_for('diario', dia=item.date) }}" class="card-title-link">
+                                {{ item.date|formatar_data_br }}
+                            </a>
+                        </h2>
+                        <span class="card-weekday">{{ item.date|obter_dia_semana }}</span>
+                        <div class="card-actions">
+                            <a href="{{ url_for('diario', dia=item.date) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('deletar_diario', dia=item.date) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que quer deletar esta entrada?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {% if item.data.photo_url %}
+                        <div class="card-photo">
+                            <img src="{{ item.data.photo_url }}" alt="Foto do dia">
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        {% if item.data.journal %}
+                            <div class="entry-section">
+                                <h3><i class="fas fa-book-open"></i> Diário</h3>
+                                <p>{{ item.data.journal[:250] }}{% if item.data.journal|length > 250 %}...{% endif %}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if item.data.rotina %}
+                            <div class="entry-section">
+                                <h3><i class="fas fa-list-check"></i> Rotina</h3>
+                                <p>{{ item.data.rotina[:250] }}{% if item.data.rotina|length > 250 %}...{% endif %}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if item.data.emocoes %}
+                            <div class="entry-section">
+                                <h3><i class="fas fa-smile"></i> Emoções</h3>
+                                <div class="tags-list">
+                                    {% for emocao in item.data.emocoes %}
+                                        <span class="tag">{{ emocao }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if item.data.habilidades %}
+                            <div class="entry-section">
+                                <h3><i class="fas fa-star"></i> Habilidades</h3>
+                                <div class="tags-list">
+                                    {% for hab in item.data.habilidades %}
+                                        <span class="tag tag-skill">{{ hab }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if item.data.checklist %}
+                            <div class="entry-section">
+                                <h3><i class="fas fa-check-square"></i> Checklist</h3>
+                                {% set concluidas = item.data.checklist|selectattr('feito')|list|length %}
+                                <div class="checklist-stats">
+                                    <strong>{{ concluidas }}/{{ item.data.checklist|length }}</strong> tarefas concluídas
+                                </div>
+                                <ul class="checklist-preview">
+                                    {% for tarefa in item.data.checklist[:5] %}
+                                        <li {% if tarefa.feito %}class="done"{% endif %}>
+                                            <i class="fas {% if tarefa.feito %}fa-check-circle{% else %}fa-circle{% endif %}"></i>
+                                            {{ tarefa.texto }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if item.data.checklist|length > 5 %}
+                                    <p class="text-muted">+ {{ item.data.checklist|length - 5 }} mais itens</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhuma entrada no histórico ainda.</p>
+            <a href="{{ url_for('diario_hoje') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar primeira entrada
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.historico-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.historico-page h1 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.historico-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.historico-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.historico-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--light-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.card-title-link {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.card-title-link:hover {
+    text-decoration: underline;
+}
+
+.card-weekday {
+    color: #999;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.card-photo {
+    max-height: 300px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.card-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.entry-section {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1rem;
+}
+
+.entry-section h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--dark-color);
+    font-size: 1rem;
+}
+
+.entry-section p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: var(--light-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.tag-skill {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.checklist-stats {
+    background: #f5f5f5;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.checklist-preview {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.checklist-preview li {
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.checklist-preview li.done {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.text-muted {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--light-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-state p {
+    color: #999;
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}

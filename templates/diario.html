@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block title %}Diário - {{ dia|formatar_data_br }} - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="diario-page">
+    <div class="diario-header">
+        <h1><i class="fas fa-pen-fancy"></i> Diário - {{ dia|formatar_data_br }}</h1>
+        <p class="diario-weekday">{{ dia|obter_dia_semana }}</p>
+    </div>
+
+    <form method="POST" class="diario-form">
+        <!-- FOTO DO DIA -->
+        <section class="diario-section photo-section">
+            <h2><i class="fas fa-camera"></i> Foto do Dia</h2>
+            <div class="form-group">
+                <label for="photo_url">URL da Foto:</label>
+                <input type="url" id="photo_url" name="photo_url" value="{{ entrada.photo_url or '' }}" placeholder="https://exemplo.com/foto.jpg">
+                {% if entrada.photo_url %}
+                    <div class="photo-preview">
+                        <img src="{{ entrada.photo_url }}" alt="Foto do dia">
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- ROTINA -->
+        <section class="diario-section">
+            <h2><i class="fas fa-list-check"></i> Rotina do Dia</h2>
+            <div class="form-group">
+                <textarea id="rotina" name="rotina" placeholder="Descreva sua rotina de hoje..." class="form-textarea">{{ entrada.rotina or '' }}</textarea>
+            </div>
+        </section>
+
+        <!-- JOURNAL / DIÁRIO -->
+        <section class="diario-section">
+            <h2><i class="fas fa-book-open"></i> Diário (Reflexão)</h2>
+            <div class="form-group">
+                <textarea id="journal" name="journal" placeholder="Como foi seu dia? O que você sentiu? Reflexões..." class="form-textarea large">{{ entrada.journal or '' }}</textarea>
+            </div>
+        </section>
+
+        <!-- EMOÇÕES -->
+        <section class="diario-section">
+            <h2><i class="fas fa-smile"></i> Emoções do Dia</h2>
+            <div class="form-group">
+                <label>Selecione as emoções vividas:</label>
+                <div class="emocoes-grid">
+                    {% for emocao_key, emocao_emoji in emocoes.items() %}
+                        <label class="emocao-checkbox">
+                            <input type="checkbox" name="emocoes" value="{{ emocao_key }}" 
+                                {% if emocao_key in entrada.emocoes %}checked{% endif %}>
+                            <span class="emocao-label">{{ emocao_emoji }} {{ emocao_key|replace('_', ' ')|title }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- HABILIDADES (SOLO LEVELING) -->
+        <section class="diario-section">
+            <h2><i class="fas fa-star"></i> Habilidades Desenvolvidas (Solo Leveling)</h2>
+            <div class="form-group">
+                <label>Que habilidades você desenvolveu hoje?</label>
+                <div class="habilidades-grid">
+                    {% for hab_key, hab_data in habilidades.items() %}
+                        <label class="habilidade-checkbox">
+                            <input type="checkbox" name="habilidades" value="{{ hab_key }}" 
+                                {% if hab_key in entrada.habilidades %}checked{% endif %}>
+                            <span class="habilidade-label">{{ hab_data.icone }} {{ hab_data.nome }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST DE TAREFAS -->
+        <section class="diario-section">
+            <h2><i class="fas fa-check-square"></i> Checklist de Tarefas</h2>
+            <div class="form-group">
+                <div class="checklist-container" id="checklist-container">
+                    {% for tarefa in entrada.checklist %}
+                        <div class="checklist-item">
+                            <input type="text" name="tarefa_texto" value="{{ tarefa.texto }}" placeholder="Descreva uma tarefa...">
+                            <button type="button" class="btn-remove-tarefa" onclick="this.parentElement.remove();">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-sm btn-outline" onclick="adicionarTarefa()">
+                    <i class="fas fa-plus"></i> Adicionar Tarefa
+                </button>
+            </div>
+        </section>
+
+        <!-- BOTÕES -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Salvar Entrada
+            </button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+.diario-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.diario-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.diario-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--dark-color);
+}
+
+.diario-weekday {
+    color: #999;
+    margin: 0.5rem 0 0 0;
+    font-style: italic;
+}
+
+.diario-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.diario-section {
+    background: var(--card);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.diario-section h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    font-size: 1.3rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.form-textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    min-height: 100px;
+    resize: vertical;
+    background: var(--input-bg);
+    color: var(--dark-color);
+}
+
+.form-textarea.large {
+    min-height: 200px;
+}
+
+.photo-section {
+    text-align: center;
+}
+
+.photo-preview {
+    margin-top: 1rem;
+    max-width: 100%;
+}
+
+.photo-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    max-height: 300px;
+}
+
+.emocoes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.emocao-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--card);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.emocao-checkbox:hover {
+    background: rgba(0,0,0,0.03);
+}
+
+.emocao-checkbox input {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.emocao-checkbox input:checked + .emocao-label {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.emocao-label {
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.habilidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.habilidade-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--card);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.habilidade-checkbox:hover {
+    background: rgba(0,0,0,0.03);
+}
+
+.habilidade-checkbox input {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.habilidade-checkbox input:checked + .habilidade-label {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.habilidade-label {
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.checklist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.checklist-item {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.checklist-item input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--dark-color);
+}
+
+.btn-remove-tarefa {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-remove-tarefa:hover {
+    background: #ff5252;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+}
+</style>
+
+<script>
+function adicionarTarefa() {
+    const container = document.getElementById('checklist-container');
+    const item = document.createElement('div');
+    item.className = 'checklist-item';
+    item.innerHTML = `
+        <input type="text" name="tarefa_texto" placeholder="Descreva uma tarefa...">
+        <button type="button" class="btn-remove-tarefa" onclick="this.parentElement.remove();">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(item);
+}
+</script>
+{% endblock %}
