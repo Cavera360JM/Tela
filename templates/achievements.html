@@ -24,67 +24,67 @@
         </div>
 
         <!-- Sete Dias -->
-        <div class="achievement-card {% if badges.sete_dias %}unlocked{% else %}locked{% endif %}">
+    <div class="achievement-card {% if user_badges.get('sete_dias') %}unlocked{% else %}locked{% endif %}">
             <div class="achievement-icon">🔥</div>
             <div class="achievement-content">
                 <h3>Sete Dias</h3>
                 <p class="achievement-desc">Escreva no diário 7 dias seguidos</p>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {% if badges.sete_dias %}100{% else %}30{% endif %}%"></div>
+                    <div class="progress-fill" style="width: {% if user_badges.get('sete_dias') %}100{% else %}30{% endif %}%"></div>
                 </div>
-                <span class="progress-text">{% if badges.sete_dias %}Desbloqueado!{% else %}Progresso: 2/7 dias{% endif %}</span>
+                <span class="progress-text">{% if user_badges.get('sete_dias') %}Desbloqueado!{% else %}Progresso: 2/7 dias{% endif %}</span>
             </div>
         </div>
 
         <!-- Trinta Dias -->
-        <div class="achievement-card {% if badges.trinta_dias %}unlocked{% else %}locked{% endif %}">
+    <div class="achievement-card {% if user_badges.get('trinta_dias') %}unlocked{% else %}locked{% endif %}">
             <div class="achievement-icon">🌟</div>
             <div class="achievement-content">
                 <h3>Trinta Dias</h3>
                 <p class="achievement-desc">Mantenha uma sequência de 30 dias</p>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {% if badges.trinta_dias %}100{% else %}10{% endif %}%"></div>
+                    <div class="progress-fill" style="width: {% if user_badges.get('trinta_dias') %}100{% else %}10{% endif %}%"></div>
                 </div>
-                <span class="progress-text">{% if badges.trinta_dias %}Desbloqueado!{% else %}Progresso: 2/30 dias{% endif %}</span>
+                <span class="progress-text">{% if user_badges.get('trinta_dias') %}Desbloqueado!{% else %}Progresso: 2/30 dias{% endif %}</span>
             </div>
         </div>
 
         <!-- Cem Entradas -->
-        <div class="achievement-card {% if badges.cem_entradas %}unlocked{% else %}locked{% endif %}">
+    <div class="achievement-card {% if user_badges.get('cem_entradas') %}unlocked{% else %}locked{% endif %}">
             <div class="achievement-icon">💯</div>
             <div class="achievement-content">
                 <h3>Cem Entradas</h3>
                 <p class="achievement-desc">Complete 100 entradas no diário</p>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {% if badges.cem_entradas %}100{% else %}5{% endif %}%"></div>
+                    <div class="progress-fill" style="width: {% if user_badges.get('cem_entradas') %}100{% else %}5{% endif %}%"></div>
                 </div>
-                <span class="progress-text">{% if badges.cem_entradas %}Desbloqueado!{% else %}Progresso: 5/100 entradas{% endif %}</span>
+                <span class="progress-text">{% if user_badges.get('cem_entradas') %}Desbloqueado!{% else %}Progresso: 5/100 entradas{% endif %}</span>
             </div>
         </div>
 
         <!-- Explorador -->
-        <div class="achievement-card {% if badges.explorador %}unlocked{% else %}locked{% endif %}">
+    <div class="achievement-card {% if user_badges.get('explorador') %}unlocked{% else %}locked{% endif %}">
             <div class="achievement-icon">🗺️</div>
             <div class="achievement-content">
                 <h3>Explorador</h3>
                 <p class="achievement-desc">Explore todas as 15 telas do aplicativo</p>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {% if badges.explorador %}100{% else %}40{% endif %}%"></div>
+                    <div class="progress-fill" style="width: {% if user_badges.get('explorador') %}100{% else %}40{% endif %}%"></div>
                 </div>
-                <span class="progress-text">{% if badges.explorador %}Desbloqueado!{% else %}Progresso: 6/15 telas{% endif %}</span>
+                <span class="progress-text">{% if user_badges.get('explorador') %}Desbloqueado!{% else %}Progresso: 6/15 telas{% endif %}</span>
             </div>
         </div>
 
         <!-- Sentimentos Master -->
-        <div class="achievement-card {% if badges.sentimentos %}unlocked{% else %}locked{% endif %}">
+    <div class="achievement-card {% if user_badges.get('sentimentos') %}unlocked{% else %}locked{% endif %}">
             <div class="achievement-icon">💜</div>
             <div class="achievement-content">
                 <h3>Sentimentos Master</h3>
                 <p class="achievement-desc">Registre pelo menos 8 sentimentos diferentes</p>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: {% if badges.sentimentos %}100{% else %}50{% endif %}%"></div>
+                    <div class="progress-fill" style="width: {% if user_badges.get('sentimentos') %}100{% else %}50{% endif %}%"></div>
                 </div>
-                <span class="progress-text">{% if badges.sentimentos %}Desbloqueado!{% else %}Progresso: 4/8 sentimentos{% endif %}</span>
+                <span class="progress-text">{% if user_badges.get('sentimentos') %}Desbloqueado!{% else %}Progresso: 4/8 sentimentos{% endif %}</span>
             </div>
         </div>
     </div>
@@ -93,14 +93,14 @@
         <div class="stat-box">
             <div class="stat-icon">🏆</div>
             <div class="stat-info">
-                <span class="stat-value">{{ badges|length }}/6</span>
+                <span class="stat-value">{{ user_badges|length }}/6</span>
                 <span class="stat-label">Badges Desbloqueadas</span>
             </div>
         </div>
         <div class="stat-box">
             <div class="stat-icon">⭐</div>
             <div class="stat-info">
-                <span class="stat-value">{{ badges|length * 100 }}</span>
+                <span class="stat-value">{{ user_badges|length * 100 }}</span>
                 <span class="stat-label">Pontos de Experiência</span>
             </div>
         </div>

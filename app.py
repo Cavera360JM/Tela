@@ -784,10 +784,19 @@ def calendario():
     # Encontrar sequência atual
     hoje = get_hoje()
     sequencia = 0
-    data_check = datetime.strptime(hoje, '%d/%m/%Y')
-    
+    # get_hoje() retorna YYYY-MM-DD, então usamos esse formato aqui
+    try:
+        data_check = datetime.strptime(hoje, '%Y-%m-%d')
+    except Exception:
+        # fallback para formatos já exibidos no banco (DD/MM/YYYY)
+        try:
+            data_check = datetime.strptime(hoje, '%d/%m/%Y')
+        except Exception:
+            data_check = datetime.now()
+
     while True:
-        data_str = data_check.strftime('%d/%m/%Y')
+        # usamos chave YYYY-MM-DD para procurar entradas no diário
+        data_str = data_check.strftime('%Y-%m-%d')
         if data_str in diario_data and diario_data[data_str].get('journal'):
             sequencia += 1
             data_check -= timedelta(days=1)
