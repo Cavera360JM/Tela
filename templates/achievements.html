@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+
+{% block title %}Achievements - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="achievements-page">
+    <div class="achievements-header">
+        <h1><i class="fas fa-trophy"></i> Suas Conquistas</h1>
+        <p class="subtitle">Desbloqueie badges completando desafios e mantendo suas rotinas</p>
+    </div>
+
+    <div class="achievements-container">
+        <!-- Primeira Entrada -->
+        <div class="achievement-card unlocked">
+            <div class="achievement-icon">📝</div>
+            <div class="achievement-content">
+                <h3>Primeira Entrada</h3>
+                <p class="achievement-desc">Crie sua primeira entrada no diário</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <span class="progress-text">Desbloqueado!</span>
+            </div>
+        </div>
+
+        <!-- Sete Dias -->
+        <div class="achievement-card {% if badges.sete_dias %}unlocked{% else %}locked{% endif %}">
+            <div class="achievement-icon">🔥</div>
+            <div class="achievement-content">
+                <h3>Sete Dias</h3>
+                <p class="achievement-desc">Escreva no diário 7 dias seguidos</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {% if badges.sete_dias %}100{% else %}30{% endif %}%"></div>
+                </div>
+                <span class="progress-text">{% if badges.sete_dias %}Desbloqueado!{% else %}Progresso: 2/7 dias{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Trinta Dias -->
+        <div class="achievement-card {% if badges.trinta_dias %}unlocked{% else %}locked{% endif %}">
+            <div class="achievement-icon">🌟</div>
+            <div class="achievement-content">
+                <h3>Trinta Dias</h3>
+                <p class="achievement-desc">Mantenha uma sequência de 30 dias</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {% if badges.trinta_dias %}100{% else %}10{% endif %}%"></div>
+                </div>
+                <span class="progress-text">{% if badges.trinta_dias %}Desbloqueado!{% else %}Progresso: 2/30 dias{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Cem Entradas -->
+        <div class="achievement-card {% if badges.cem_entradas %}unlocked{% else %}locked{% endif %}">
+            <div class="achievement-icon">💯</div>
+            <div class="achievement-content">
+                <h3>Cem Entradas</h3>
+                <p class="achievement-desc">Complete 100 entradas no diário</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {% if badges.cem_entradas %}100{% else %}5{% endif %}%"></div>
+                </div>
+                <span class="progress-text">{% if badges.cem_entradas %}Desbloqueado!{% else %}Progresso: 5/100 entradas{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Explorador -->
+        <div class="achievement-card {% if badges.explorador %}unlocked{% else %}locked{% endif %}">
+            <div class="achievement-icon">🗺️</div>
+            <div class="achievement-content">
+                <h3>Explorador</h3>
+                <p class="achievement-desc">Explore todas as 15 telas do aplicativo</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {% if badges.explorador %}100{% else %}40{% endif %}%"></div>
+                </div>
+                <span class="progress-text">{% if badges.explorador %}Desbloqueado!{% else %}Progresso: 6/15 telas{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Sentimentos Master -->
+        <div class="achievement-card {% if badges.sentimentos %}unlocked{% else %}locked{% endif %}">
+            <div class="achievement-icon">💜</div>
+            <div class="achievement-content">
+                <h3>Sentimentos Master</h3>
+                <p class="achievement-desc">Registre pelo menos 8 sentimentos diferentes</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {% if badges.sentimentos %}100{% else %}50{% endif %}%"></div>
+                </div>
+                <span class="progress-text">{% if badges.sentimentos %}Desbloqueado!{% else %}Progresso: 4/8 sentimentos{% endif %}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="achievements-stats">
+        <div class="stat-box">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ badges|length }}/6</span>
+                <span class="stat-label">Badges Desbloqueadas</span>
+            </div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+                <span class="stat-value">{{ badges|length * 100 }}</span>
+                <span class="stat-label">Pontos de Experiência</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dicas de Desbloqueio -->
+    <div class="tips-section">
+        <h2>💡 Dicas para Desbloquear Mais</h2>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <i class="fas fa-check-circle"></i>
+                <h4>Mantenha Consistência</h4>
+                <p>Escreva no seu diário todos os dias para desbloquear badges de sequência</p>
+            </div>
+            <div class="tip-card">
+                <i class="fas fa-heart"></i>
+                <h4>Explore Emoções</h4>
+                <p>Registre diferentes sentimentos para entender melhor suas emoções</p>
+            </div>
+            <div class="tip-card">
+                <i class="fas fa-star"></i>
+                <h4>Desenvolva Habilidades</h4>
+                <p>Adicione habilidades e acompanhe seu desenvolvimento pessoal</p>
+            </div>
+            <div class="tip-card">
+                <i class="fas fa-map"></i>
+                <h4>Explore Tudo</h4>
+                <p>Visite todas as seções do app para desbloquear o badge Explorador</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.achievements-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+.achievements-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.achievements-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--dark-color);
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.achievement-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: var(--card);
+    border-radius: 12px;
+    border: 2px solid rgba(0,0,0,0.06);
+    transition: all 0.3s;
+    opacity: 0.7;
+}
+
+.achievement-card.unlocked {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02));
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+.achievement-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+    filter: grayscale(80%);
+}
+
+.achievement-card.unlocked .achievement-icon {
+    filter: grayscale(0%);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.achievement-content {
+    flex: 1;
+}
+
+.achievement-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: var(--dark-color);
+}
+
+.achievement-desc {
+    margin: 0 0 1rem 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #764ba2);
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.progress-text {
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.achievement-card:not(.unlocked) {
+    filter: grayscale(40%);
+}
+
+.achievements-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-box {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--accent), #764ba2);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.tips-section {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+.tips-section h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tip-card {
+    padding: 1.5rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    transition: all 0.3s;
+}
+
+.tip-card:hover {
+    transform: translateY(-4px);
+    background: rgba(139, 92, 246, 0.08);
+}
+
+.tip-card i {
+    font-size: 1.8rem;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.tip-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--dark-color);
+}
+
+.tip-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+@media (max-width: 768px) {
+    .achievements-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .achievements-container {
+        grid-template-columns: 1fr;
+    }
+
+    .achievement-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

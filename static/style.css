@@ -84,3 +84,71 @@ textarea.form-textarea { background: var(--input-bg); }
 .diario-section, .chart-section, .summary-section, .stat-card, .empty-state, .auth-card {
 	background: var(--card) !important;
 }
+
+/* Dropdown Menu Styles */
+.nav-dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-toggle {
+	background: none;
+	border: none;
+	color: var(--muted);
+	cursor: pointer;
+	padding: 6px 12px;
+	border-radius: 6px;
+	transition: all 0.2s;
+	margin-left: 8px;
+}
+
+.dropdown-toggle:hover {
+	background: rgba(0,0,0,0.04);
+	color: var(--dark-color);
+}
+
+.dropdown-menu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+	min-width: 200px;
+	display: none;
+	z-index: 1000;
+	margin-top: 8px;
+	overflow: hidden;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+	display: block;
+}
+
+.dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px;
+	color: var(--dark-color);
+	text-decoration: none;
+	transition: all 0.2s;
+	font-size: 0.95rem;
+	border: none;
+	background: none;
+	cursor: pointer;
+	width: 100%;
+	text-align: left;
+}
+
+.dropdown-item:hover {
+	background: var(--accent);
+	color: white;
+}
+
+.dropdown-divider {
+	border: none;
+	border-top: 1px solid var(--border);
+	margin: 8px 0;
+}

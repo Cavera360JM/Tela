@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="perfil-page">
+    <div class="perfil-header">
+        <div class="perfil-cover" style="background: linear-gradient(135deg, var(--accent), #667eea);"></div>
+        <div class="perfil-info">
+            <img src="{{ usuario.get('foto_perfil_url', 'https://placehold.co/100x100') }}" alt="{{ usuario.get('nome', 'Usuário') }}" class="perfil-avatar">
+            <div class="perfil-details">
+                <h1>{{ usuario.get('nome', 'Usuário') }}</h1>
+                <p class="perfil-email">{{ usuario.get('email', '') }}</p>
+                <div class="perfil-stats">
+                    <div class="stat-badge">
+                        <span class="stat-valor">{{ badges|length }}</span>
+                        <span class="stat-label">Badges</span>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-valor">✨</span>
+                        <span class="stat-label">Premium</span>
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url_for('configuracoes') }}" class="btn btn-primary">
+                <i class="fas fa-cog"></i> Editar Perfil
+            </a>
+        </div>
+    </div>
+
+    <div class="perfil-content">
+        <!-- Badges Desbloqueados -->
+        {% if badges %}
+            <section class="perfil-section">
+                <h2><i class="fas fa-trophy"></i> Suas Conquistas</h2>
+                <div class="badges-grid">
+                    {% for badge_key, badge_info in badges.items() %}
+                        <div class="badge-card unlocked">
+                            <div class="badge-icon">{{ badge_info.get('icone', '🏆') }}</div>
+                            <div class="badge-text">
+                                <h3>{{ badge_info.get('nome', badge_key) }}</h3>
+                                <p>{{ badge_info.get('descricao', '') }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <!-- Ações Rápidas -->
+        <section class="perfil-section">
+            <h2><i class="fas fa-bolt"></i> Ações Rápidas</h2>
+            <div class="acoes-grid">
+                <a href="{{ url_for('diario_hoje') }}" class="acao-card">
+                    <i class="fas fa-pen"></i>
+                    <span>Novo Diário</span>
+                </a>
+                <a href="{{ url_for('achievements') }}" class="acao-card">
+                    <i class="fas fa-trophy"></i>
+                    <span>Achievements</span>
+                </a>
+                <a href="{{ url_for('analise') }}" class="acao-card">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Análise</span>
+                </a>
+                <a href="{{ url_for('configuracoes') }}" class="acao-card">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Estatísticas do Perfil -->
+        <section class="perfil-section">
+            <h2><i class="fas fa-bar-chart"></i> Estatísticas</h2>
+            <div class="stats-cards">
+                <div class="stat-card-mini">
+                    <div class="stat-mini-icon">📝</div>
+                    <div class="stat-mini-text">
+                        <span class="value">--</span>
+                        <span class="label">Entradas</span>
+                    </div>
+                </div>
+                <div class="stat-card-mini">
+                    <div class="stat-mini-icon">🔥</div>
+                    <div class="stat-mini-text">
+                        <span class="value">--</span>
+                        <span class="label">Dias Seguidos</span>
+                    </div>
+                </div>
+                <div class="stat-card-mini">
+                    <div class="stat-mini-icon">💎</div>
+                    <div class="stat-mini-text">
+                        <span class="value">--</span>
+                        <span class="label">Exp Ganho</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+.perfil-page { max-width: 1000px; margin: 0 auto; }
+
+.perfil-header {
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.perfil-cover {
+    height: 200px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.perfil-info {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    transform: translateY(-60px);
+    position: relative;
+    z-index: 1;
+}
+
+.perfil-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid var(--card);
+    background: var(--card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.perfil-details {
+    flex: 1;
+}
+
+.perfil-details h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    color: var(--dark-color);
+}
+
+.perfil-email {
+    color: var(--muted);
+    margin: 0 0 1rem 0;
+}
+
+.perfil-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.stat-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+}
+
+.perfil-section {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.perfil-section h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+    font-size: 1.3rem;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.badge-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.badge-card.unlocked {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.badge-icon {
+    font-size: 2rem;
+}
+
+.badge-text h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--dark-color);
+}
+
+.badge-text p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.acoes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.acao-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--accent), rgba(139, 92, 246, 0.5));
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.acao-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+}
+
+.acao-card i {
+    font-size: 1.8rem;
+}
+
+.acao-card span {
+    font-weight: 600;
+    text-align: center;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card-mini {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+}
+
+.stat-mini-icon {
+    font-size: 2rem;
+}
+
+.stat-mini-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.label {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+@media (max-width: 768px) {
+    .perfil-info {
+        flex-direction: column;
+        text-align: center;
+        transform: translateY(-40px);
+    }
+
+    .acoes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

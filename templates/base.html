@@ -19,7 +19,7 @@
                         <i class="fas fa-home"></i> Dashboard
                     </a>
                     <a href="{{ url_for('diario_hoje') }}" class="nav-link">
-                        <i class="fas fa-pen"></i> Diário Hoje
+                        <i class="fas fa-pen"></i> Diário
                     </a>
                     <a href="{{ url_for('historico') }}" class="nav-link">
                         <i class="fas fa-history"></i> Histórico
@@ -27,6 +27,41 @@
                     <a href="{{ url_for('analise') }}" class="nav-link">
                         <i class="fas fa-chart-bar"></i> Análise
                     </a>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="nav-dropdown">
+                        <button class="nav-link dropdown-toggle">
+                            <i class="fas fa-ellipsis-h"></i> Mais
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{{ url_for('perfil') }}" class="dropdown-item">
+                                <i class="fas fa-user"></i> Meu Perfil
+                            </a>
+                            <a href="{{ url_for('achievements') }}" class="dropdown-item">
+                                <i class="fas fa-trophy"></i> Achievements
+                            </a>
+                            <a href="{{ url_for('galeria') }}" class="dropdown-item">
+                                <i class="fas fa-images"></i> Galeria
+                            </a>
+                            <a href="{{ url_for('calendario') }}" class="dropdown-item">
+                                <i class="fas fa-calendar-alt"></i> Calendário
+                            </a>
+                            <a href="{{ url_for('comunidade') }}" class="dropdown-item">
+                                <i class="fas fa-users"></i> Comunidade
+                            </a>
+                            <a href="{{ url_for('busca') }}" class="dropdown-item">
+                                <i class="fas fa-search"></i> Busca
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="{{ url_for('notificacoes') }}" class="dropdown-item">
+                                <i class="fas fa-bell"></i> Notificações
+                            </a>
+                            <a href="{{ url_for('configuracoes') }}" class="dropdown-item">
+                                <i class="fas fa-cog"></i> Configurações
+                            </a>
+                        </div>
+                    </div>
+                    
                     <div class="nav-user">
                         <img src="{{ session.user_foto }}" alt="{{ session.user_nome }}" class="user-avatar">
                         <span class="user-name">{{ session.user_nome }}</span>

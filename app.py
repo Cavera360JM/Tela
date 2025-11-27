@@ -5,6 +5,9 @@ import pytz
 import firebase_admin
 from firebase_admin import credentials, db 
 import json
+import base64
+import os
+from werkzeug.utils import secure_filename
 
 # --- CONFIGURAÇÃO ---
 app = Flask(__name__)
@@ -501,6 +504,305 @@ def deletar_diario(dia):
     diario_ref.child(dia).delete()
     flash(f'Entrada de {dia} deletada com sucesso.', 'info')
     return redirect(url_for('historico'))
+
+
+# --- CONFIGURAÇÃO DE UPLOAD ---
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# --- ENDPOINTS DE PERFIL DO USUÁRIO ---
+@app.route('/perfil')
+@login_required
+@verificar_conexao
+def perfil():
+    """Página de perfil do usuário"""
+    user_id = session['user_id']
+    usuarios_ref = DB_ROOT.child('usuarios')
+    usuario_data = usuarios_ref.child(user_id).get()
+    
+    if usuario_data:
+        user_info = usuario_data
+        badges_ref = DB_ROOT.child('badges').child(user_id)
+        badges_data = badges_ref.get() or {}
+    else:
+        user_info = {}
+        badges_data = {}
+    
+    return render_template('perfil.html', usuario=user_info, badges=badges_data)
+
+
+# --- ENDPOINTS DE UPLOAD DE FOTO ---
+@app.route('/api/upload-foto', methods=['POST'])
+@login_required
+@verificar_conexao
+def upload_foto():
+    """Upload de foto para o diário (base64 ou file)"""
+    user_id = session['user_id']
+    
+    if 'file' in request.files:
+        file = request.files['file']
+        if file and file.filename and allowed_file(file.filename):
+            file_data = file.read()
+            if len(file_data) <= MAX_FILE_SIZE:
+                b64 = base64.b64encode(file_data).decode('utf-8')
+                mime_type = f"image/{file.filename.rsplit('.', 1)[1].lower()}"
+                photo_url = f"data:{mime_type};base64,{b64}"
+                
+                galeria_ref = DB_ROOT.child('galeria').child(user_id)
+                photo_id = datetime.now().strftime('%Y%m%d%H%M%S')
+                galeria_ref.child(photo_id).set({
+                    'url': photo_url,
+                    'timestamp': int(datetime.now().timestamp() * 1000),
+                    'filename': secure_filename(file.filename)
+                })
+                return jsonify({'success': True, 'photo_url': photo_url, 'photo_id': photo_id})
+            else:
+                return jsonify({'error': 'Arquivo muito grande (máx 5MB)'}), 400
+        else:
+            return jsonify({'error': 'Tipo de arquivo não permitido'}), 400
+    
+    photo_url = request.json.get('photo_url', '') if request.json else ''
+    if photo_url:
+        galeria_ref = DB_ROOT.child('galeria').child(user_id)
+        photo_id = datetime.now().strftime('%Y%m%d%H%M%S')
+        galeria_ref.child(photo_id).set({
+            'url': photo_url,
+            'timestamp': int(datetime.now().timestamp() * 1000),
+            'filename': 'url_externa'
+        })
+        return jsonify({'success': True, 'photo_url': photo_url, 'photo_id': photo_id})
+    
+    return jsonify({'error': 'Nenhuma foto fornecida'}), 400
+
+
+@app.route('/api/galeria')
+@login_required
+@verificar_conexao
+def api_galeria():
+    """Lista de fotos da galeria do usuário"""
+    user_id = session['user_id']
+    galeria_ref = DB_ROOT.child('galeria').child(user_id)
+    fotos = galeria_ref.get() or {}
+    
+    fotos_list = []
+    for photo_id, photo_data in fotos.items():
+        fotos_list.append({
+            'id': photo_id,
+            'url': photo_data.get('url'),
+            'timestamp': photo_data.get('timestamp'),
+            'filename': photo_data.get('filename', 'foto')
+        })
+    
+    return jsonify({'fotos': sorted(fotos_list, key=lambda x: x['timestamp'], reverse=True)})
+
+
+# --- ENDPOINTS DE ACHIEVEMENTS ---
+@app.route('/achievements')
+@login_required
+@verificar_conexao
+def achievements():
+    """Página de achievements e badges"""
+    user_id = session['user_id']
+    badges_ref = DB_ROOT.child('badges').child(user_id)
+    user_badges = badges_ref.get() or {}
+    
+    all_badges = {
+        'primeira_entrada': {'nome': 'Primeira Entrada', 'descricao': 'Crie sua primeira entrada', 'icone': '📝'},
+        'sete_dias': {'nome': '7 Dias Seguidos', 'descricao': 'Registre 7 dias consecutivos', 'icone': '🔥'},
+        'trinta_dias': {'nome': 'Mês Completo', 'descricao': 'Registre 30 dias no mês', 'icone': '🎯'},
+        'cem_entradas': {'nome': '100 Entradas', 'descricao': 'Crie 100 entradas', 'icone': '💯'},
+        'explorador': {'nome': 'Explorador', 'descricao': 'Use 5 habilidades diferentes', 'icone': '🗺️'},
+        'sentimentos': {'nome': 'Conhecedor de Emoções', 'descricao': 'Registre todas as 8 emoções', 'icone': '💎'},
+    }
+    
+    return render_template('achievements.html', all_badges=all_badges, user_badges=user_badges)
+
+
+# --- ENDPOINTS DE CONFIGURAÇÕES ---
+@app.route('/configuracoes')
+@login_required
+@verificar_conexao
+def configuracoes():
+    """Página de configurações do usuário"""
+    user_id = session['user_id']
+    config_ref = DB_ROOT.child('listas').child(user_id).child('config')
+    config_data = config_ref.get() or {}
+    
+    return render_template('configuracoes.html', config=config_data)
+
+
+@app.route('/api/config', methods=['POST'])
+@login_required
+@verificar_conexao
+def api_config_update():
+    """Atualiza configurações do usuário"""
+    user_id = session['user_id']
+    config_data = request.get_json() or {}
+    
+    config_ref = DB_ROOT.child('listas').child(user_id).child('config')
+    for key, value in config_data.items():
+        config_ref.child(key).set(value)
+    
+    return jsonify({'success': True})
+
+
+# --- ENDPOINTS DE BUSCA E FILTRO ---
+@app.route('/busca')
+@login_required
+@verificar_conexao
+def busca():
+    """Página de busca e filtros avançados"""
+    user_id = session['user_id']
+    query = request.args.get('q', '')
+    emocao_filter = request.args.get('emocao', '')
+    habilidade_filter = request.args.get('habilidade', '')
+    data_inicio = request.args.get('data_inicio', '')
+    data_fim = request.args.get('data_fim', '')
+    
+    diario_ref = get_user_diario_ref(user_id)
+    diario_data = diario_ref.get() or {}
+    
+    resultados = []
+    for data_str, entrada in diario_data.items():
+        match = True
+        
+        if query:
+            search_text = (entrada.get('journal', '') + ' ' + entrada.get('rotina', '')).lower()
+            if query.lower() not in search_text:
+                match = False
+        
+        if emocao_filter and emocao_filter not in entrada.get('emocoes', []):
+            match = False
+        
+        if habilidade_filter and habilidade_filter not in entrada.get('habilidades', []):
+            match = False
+        
+        if data_inicio and data_str < data_inicio:
+            match = False
+        
+        if data_fim and data_str > data_fim:
+            match = False
+        
+        if match:
+            resultados.append({'date': data_str, 'data': entrada})
+    
+    emocoes, habilidades = load_user_lists(user_id)
+    
+    return render_template('busca.html', 
+                          resultados=resultados, 
+                          query=query,
+                          emocoes=emocoes,
+                          habilidades=habilidades,
+                          emocao_filter=emocao_filter,
+                          habilidade_filter=habilidade_filter,
+                          data_inicio=data_inicio,
+                          data_fim=data_fim)
+
+
+# --- ENDPOINTS DE GALERIA ---
+@app.route('/galeria')
+@login_required
+@verificar_conexao
+def galeria():
+    """Página de galeria de fotos"""
+    user_id = session['user_id']
+    galeria_ref = DB_ROOT.child('galeria').child(user_id)
+    fotos = galeria_ref.get() or {}
+    
+    return render_template('galeria.html', fotos=fotos)
+
+
+# --- ENDPOINTS DE COMUNIDADE ---
+@app.route('/comunidade')
+@login_required
+@verificar_conexao
+def comunidade():
+    """Página de comunidade e feed social"""
+    posts_ref = DB_ROOT.child('posts')
+    posts = posts_ref.get() or {}
+    
+    posts_list = []
+    for post_id, post_data in posts.items():
+        posts_list.append({
+            'id': post_id,
+            'author': post_data.get('author', 'Usuário'),
+            'content': post_data.get('content', ''),
+            'timestamp': post_data.get('timestamp', ''),
+            'likes': post_data.get('likes', 0),
+            'comments': post_data.get('comments', [])
+        })
+    
+    posts_list = sorted(posts_list, key=lambda x: x['timestamp'], reverse=True)
+    
+    return render_template('comunidade.html', posts=posts_list)
+
+
+# --- ENDPOINTS DE NOTIFICAÇÕES ---
+@app.route('/notificacoes')
+@login_required
+@verificar_conexao
+def notificacoes():
+    """Página de notificações"""
+    user_id = session['user_id']
+    notif_ref = DB_ROOT.child('notificacoes').child(user_id)
+    notificacoes_data = notif_ref.get() or {}
+    
+    notificacoes_list = []
+    for notif_id, notif_data in notificacoes_data.items():
+        notificacoes_list.append({
+            'id': notif_id,
+            'tipo': notif_data.get('tipo', 'sistema'),
+            'titulo': notif_data.get('titulo', ''),
+            'descricao': notif_data.get('descricao', ''),
+            'lida': notif_data.get('lida', False),
+            'timestamp': notif_data.get('timestamp', '')
+        })
+    
+    notificacoes_list = sorted(notificacoes_list, key=lambda x: x['timestamp'], reverse=True)
+    
+    return render_template('notificacoes.html', notificacoes=notificacoes_list)
+
+
+# --- ENDPOINTS DE CALENDÁRIO ---
+@app.route('/calendario')
+@login_required
+@verificar_conexao
+def calendario():
+    """Página de calendário com heatmap de atividades"""
+    user_id = session['user_id']
+    diario_ref = get_user_diario_ref(user_id)
+    diario_data = diario_ref.get() or {}
+    
+    # Calcular estatísticas
+    total_entradas = len(diario_data)
+    
+    # Encontrar sequência atual
+    hoje = get_hoje()
+    sequencia = 0
+    data_check = datetime.strptime(hoje, '%d/%m/%Y')
+    
+    while True:
+        data_str = data_check.strftime('%d/%m/%Y')
+        if data_str in diario_data and diario_data[data_str].get('journal'):
+            sequencia += 1
+            data_check -= timedelta(days=1)
+        else:
+            break
+    
+    emocoes, habilidades = load_user_lists(user_id)
+    
+    return render_template('calendario.html', 
+                          total_entradas=total_entradas,
+                          sequencia_atual=sequencia,
+                          diario_data=diario_data,
+                          emocoes=emocoes,
+                          habilidades=habilidades)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

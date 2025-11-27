@@ -1,0 +1,628 @@
+{% extends 'base.html' %}
+
+{% block title %}Comunidade - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="comunidade-page">
+    <div class="comunidade-header">
+        <div>
+            <h1><i class="fas fa-users"></i> Comunidade</h1>
+            <p>Conecte-se com outros usuários e compartilhe experiências</p>
+        </div>
+        <button class="btn btn-primary" onclick="abrirPostModal()">
+            <i class="fas fa-pen"></i> Criar Post
+        </button>
+    </div>
+
+    <div class="comunidade-container">
+        <!-- Sidebar com Filtros -->
+        <div class="comunidade-sidebar">
+            <div class="sidebar-section">
+                <h3>Filtros</h3>
+                <button class="filtro-btn active" onclick="filtrarPosts('todos')">
+                    <i class="fas fa-fire"></i> Populares
+                </button>
+                <button class="filtro-btn" onclick="filtrarPosts('recentes')">
+                    <i class="fas fa-clock"></i> Recentes
+                </button>
+                <button class="filtro-btn" onclick="filtrarPosts('amigos')">
+                    <i class="fas fa-heart"></i> Amigos
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Tópicos em Alta</h3>
+                <div class="topicos-list">
+                    <a href="#" class="topico-item">
+                        <span class="topico-badge">42</span>
+                        <span class="topico-nome">#Motivação</span>
+                    </a>
+                    <a href="#" class="topico-item">
+                        <span class="topico-badge">38</span>
+                        <span class="topico-nome">#Rotinas</span>
+                    </a>
+                    <a href="#" class="topico-item">
+                        <span class="topico-badge">25</span>
+                        <span class="topico-nome">#Sentimentos</span>
+                    </a>
+                    <a href="#" class="topico-item">
+                        <span class="topico-badge">19</span>
+                        <span class="topico-nome">#Desafios</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Usuários para Seguir</h3>
+                <div class="usuarios-follow">
+                    <div class="user-follow-item">
+                        <img src="https://i.pravatar.cc/40?img=1" alt="Avatar" class="user-avatar-small">
+                        <div>
+                            <div class="user-name">Ana Silva</div>
+                            <small>2.5k seguidores</small>
+                        </div>
+                        <button class="btn-follow" onclick="seguirUsuario()">Seguir</button>
+                    </div>
+                    <div class="user-follow-item">
+                        <img src="https://i.pravatar.cc/40?img=2" alt="Avatar" class="user-avatar-small">
+                        <div>
+                            <div class="user-name">Carlos Mendes</div>
+                            <small>1.8k seguidores</small>
+                        </div>
+                        <button class="btn-follow" onclick="seguirUsuario()">Seguir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feed de Posts -->
+        <div class="comunidade-feed">
+            <!-- Post 1 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="https://i.pravatar.cc/48?img=1" alt="Avatar" class="post-avatar">
+                    <div class="post-author-info">
+                        <div class="post-author">Ana Silva</div>
+                        <small class="post-time">Há 2 horas</small>
+                    </div>
+                    <button class="post-menu" onclick="abrirMenuPost()"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+
+                <div class="post-content">
+                    <p>Hoje completei meu 7º dia de consistência! 🔥 Sinto-me tão motivado e com mais energia. O diário realmente ajuda a organizar os pensamentos. Recomendo a todos!</p>
+                </div>
+
+                <div class="post-image">
+                    <img src="https://via.placeholder.com/500x300?text=Motivação" alt="Post">
+                </div>
+
+                <div class="post-tags">
+                    <span class="tag">#Motivação</span>
+                    <span class="tag">#Consistência</span>
+                    <span class="tag">#Crescimento</span>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-btn" onclick="curtirPost()">
+                        <i class="fas fa-heart"></i> <span>42</span>
+                    </button>
+                    <button class="action-btn" onclick="abrirComentarios()">
+                        <i class="fas fa-comment"></i> <span>12</span>
+                    </button>
+                    <button class="action-btn" onclick="compartilharPost()">
+                        <i class="fas fa-share"></i> <span>8</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Post 2 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="https://i.pravatar.cc/48?img=3" alt="Avatar" class="post-avatar">
+                    <div class="post-author-info">
+                        <div class="post-author">Carlos Mendes</div>
+                        <small class="post-time">Há 5 horas</small>
+                    </div>
+                    <button class="post-menu" onclick="abrirMenuPost()"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+
+                <div class="post-content">
+                    <p>Qual é a melhor hora do dia para escrever no diário? Eu costumo escrever à noite para refletir sobre o dia. Vocês preferem manhã ou noite?</p>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-btn" onclick="curtirPost()">
+                        <i class="fas fa-heart"></i> <span>28</span>
+                    </button>
+                    <button class="action-btn" onclick="abrirComentarios()">
+                        <i class="fas fa-comment"></i> <span>15</span>
+                    </button>
+                    <button class="action-btn" onclick="compartilharPost()">
+                        <i class="fas fa-share"></i> <span>5</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Post 3 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="https://i.pravatar.cc/48?img=5" alt="Avatar" class="post-avatar">
+                    <div class="post-author-info">
+                        <div class="post-author">Marina Costa</div>
+                        <small class="post-time">Há 8 horas</small>
+                    </div>
+                    <button class="post-menu" onclick="abrirMenuPost()"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+
+                <div class="post-content">
+                    <p>Descobri que meu sentimento mais recorrente é ansiedade, mas escrever no diário realmente ajuda a processar essas emoções. Gratidão a todos que compartilham suas histórias aqui! 💜</p>
+                </div>
+
+                <div class="post-tags">
+                    <span class="tag">#Sentimentos</span>
+                    <span class="tag">#Autorreflexão</span>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-btn" onclick="curtirPost()">
+                        <i class="fas fa-heart"></i> <span>156</span>
+                    </button>
+                    <button class="action-btn" onclick="abrirComentarios()">
+                        <i class="fas fa-comment"></i> <span>34</span>
+                    </button>
+                    <button class="action-btn" onclick="compartilharPost()">
+                        <i class="fas fa-share"></i> <span>22</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Novo Post -->
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Post</h2>
+                <button class="modal-close" onclick="fecharPostModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="post-form">
+                    <textarea id="post-texto" class="form-control" placeholder="Compartilhe seu pensamento com a comunidade..." rows="5"></textarea>
+                    <div class="post-form-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-image"></i> Adicionar Imagem
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-smile"></i> Emoji
+                        </button>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="fecharPostModal()">Cancelar</button>
+                        <button class="btn btn-primary" onclick="publicarPost()">
+                            <i class="fas fa-paper-plane"></i> Publicar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.comunidade-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+.comunidade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.comunidade-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--dark-color);
+}
+
+.comunidade-header p {
+    margin: 0.5rem 0 0 0;
+    color: var(--muted);
+}
+
+.comunidade-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+}
+
+.comunidade-sidebar {
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.sidebar-section h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--dark-color);
+}
+
+.filtro-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.02);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.filtro-btn:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.filtro-btn.active {
+    background: var(--accent);
+    color: white;
+}
+
+.topicos-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.topico-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--dark-color);
+    transition: all 0.2s;
+}
+
+.topico-item:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.topico-badge {
+    background: var(--accent);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.topico-nome {
+    flex: 1;
+}
+
+.usuarios-follow {
+    display: grid;
+    gap: 1rem;
+}
+
+.user-follow-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+}
+
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+}
+
+.btn-follow {
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: opacity 0.2s;
+}
+
+.btn-follow:hover {
+    opacity: 0.9;
+}
+
+.comunidade-feed {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.post-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: all 0.2s;
+}
+
+.post-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.post-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-author-info {
+    flex: 1;
+}
+
+.post-author {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.post-time {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.post-menu {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.post-content {
+    color: var(--dark-color);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.post-image {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.post-image img {
+    width: 100%;
+    display: block;
+}
+
+.post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.tag {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--accent);
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.post-actions {
+    display: flex;
+    gap: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--accent);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.post-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.post-form-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.post-form-actions .btn {
+    flex: 1;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(0,0,0,0.1);
+    color: var(--dark-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--dark-color);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+@media (max-width: 1024px) {
+    .comunidade-container {
+        grid-template-columns: 1fr;
+    }
+
+    .comunidade-sidebar {
+        position: static;
+    }
+}
+</style>
+
+<script>
+function abrirPostModal() {
+    document.getElementById('post-modal').classList.add('active');
+}
+
+function fecharPostModal() {
+    document.getElementById('post-modal').classList.remove('active');
+}
+
+function publicarPost() {
+    alert('Post publicado com sucesso!');
+    fecharPostModal();
+}
+
+function curtirPost() {
+    alert('Post curtido!');
+}
+
+function abrirComentarios() {
+    alert('Abrir comentários');
+}
+
+function compartilharPost() {
+    alert('Post compartilhado!');
+}
+
+function filtrarPosts(tipo) {
+    document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function seguirUsuario() {
+    alert('Usuário seguido!');
+}
+</script>
+{% endblock %}

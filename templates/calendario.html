@@ -1,0 +1,618 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendário - Bloco de Notas Interativo{% endblock %}
+
+{% block content %}
+<div class="calendario-page">
+    <div class="calendario-header">
+        <div>
+            <h1><i class="fas fa-calendar-alt"></i> Calendário</h1>
+            <p>Visualize sua atividade e sequência de dias</p>
+        </div>
+        <div class="header-controls">
+            <button class="btn-nav" onclick="mesAnterior()"><i class="fas fa-chevron-left"></i></button>
+            <span id="mes-ano" style="font-weight: 600; min-width: 150px; text-align: center;"></span>
+            <button class="btn-nav" onclick="proxMes()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <div class="calendario-container">
+        <!-- Calendário Principal -->
+        <div class="calendario-main">
+            <div class="dias-semana">
+                <div class="dia-nome">Dom</div>
+                <div class="dia-nome">Seg</div>
+                <div class="dia-nome">Ter</div>
+                <div class="dia-nome">Qua</div>
+                <div class="dia-nome">Qui</div>
+                <div class="dia-nome">Sex</div>
+                <div class="dia-nome">Sab</div>
+            </div>
+
+            <div class="dias-grid" id="calendario-grid">
+                <!-- Dias serão preenchidos aqui -->
+            </div>
+        </div>
+
+        <!-- Sidebar com Informações -->
+        <div class="calendario-sidebar">
+            <!-- Estatísticas -->
+            <div class="stats-box">
+                <h3>Estatísticas deste mês</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Entradas</span>
+                    <span class="stat-value">18</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Dias Ativos</span>
+                    <span class="stat-value">20</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sequência</span>
+                    <span class="stat-value">7 🔥</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Taxa de Frequência</span>
+                    <span class="stat-value">65%</span>
+                </div>
+            </div>
+
+            <!-- Legenda -->
+            <div class="legenda-box">
+                <h3>Legenda</h3>
+                <div class="legenda-item">
+                    <div class="legenda-cor com-entrada"></div>
+                    <span>Com Entrada</span>
+                </div>
+                <div class="legenda-item">
+                    <div class="legenda-cor sequencia"></div>
+                    <span>Sequência</span>
+                </div>
+                <div class="legenda-item">
+                    <div class="legenda-cor sem-entrada"></div>
+                    <span>Sem Entrada</span>
+                </div>
+                <div class="legenda-item">
+                    <div class="legenda-cor hoje"></div>
+                    <span>Hoje</span>
+                </div>
+            </div>
+
+            <!-- Próximos Lembretes -->
+            <div class="lembretes-box">
+                <h3>Próximos Lembretes</h3>
+                <div class="lembrete-item">
+                    <i class="fas fa-alarm-clock"></i>
+                    <div>
+                        <div class="lembrete-hora">09:00</div>
+                        <small>Escrever no diário</small>
+                    </div>
+                </div>
+                <div class="lembrete-item">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <div class="lembrete-hora">30 dias</div>
+                        <small>Próximo milestone</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise de Sentimentos por Mês -->
+            <div class="sentimentos-box">
+                <h3>Sentimentos Mais Frequentes</h3>
+                <div class="sentimento-chart">
+                    <div class="chart-item">
+                        <span class="sentimento-icon">😊</span>
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="width: 70%"></div>
+                        </div>
+                        <span class="chart-label">Feliz (35)</span>
+                    </div>
+                    <div class="chart-item">
+                        <span class="sentimento-icon">😌</span>
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="width: 55%"></div>
+                        </div>
+                        <span class="chart-label">Calmo (28)</span>
+                    </div>
+                    <div class="chart-item">
+                        <span class="sentimento-icon">🔥</span>
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="width: 45%"></div>
+                        </div>
+                        <span class="chart-label">Motivado (23)</span>
+                    </div>
+                    <div class="chart-item">
+                        <span class="sentimento-icon">😰</span>
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="width: 30%"></div>
+                        </div>
+                        <span class="chart-label">Ansioso (15)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Ver Detalhes do Dia -->
+    <div id="dia-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-dia-title"></h2>
+                <button class="modal-close" onclick="fecharDiaModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-dia-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.calendario-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.calendario-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--dark-color);
+}
+
+.calendario-header p {
+    margin: 0.5rem 0 0 0;
+    color: var(--muted);
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--card);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.btn-nav {
+    background: none;
+    border: none;
+    color: var(--dark-color);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.btn-nav:hover {
+    color: var(--accent);
+}
+
+.calendario-container {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+}
+
+.calendario-main {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.dias-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.dia-nome {
+    text-align: center;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 1rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+.dias-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.dia-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.dia-cell.outro-mes {
+    color: var(--muted);
+    background: rgba(0,0,0,0.02);
+    cursor: default;
+}
+
+.dia-cell.vazio {
+    background: rgba(0,0,0,0.02);
+    color: var(--muted);
+}
+
+.dia-cell.com-entrada {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.dia-cell.sequencia {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: #667eea;
+    font-weight: bold;
+}
+
+.dia-cell.hoje {
+    background: var(--accent);
+    color: white;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+.dia-cell:hover:not(.outro-mes) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dia-cell.futura {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.calendario-sidebar {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.stats-box, .legenda-box, .lembretes-box, .sentimentos-box {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.stats-box h3, .legenda-box h3, .lembretes-box h3, .sentimentos-box h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: var(--dark-color);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.legenda-item:last-child {
+    margin-bottom: 0;
+}
+
+.legenda-cor {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+}
+
+.legenda-cor.com-entrada {
+    background: rgba(139, 92, 246, 0.2);
+    border: 2px solid var(--accent);
+}
+
+.legenda-cor.sequencia {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.legenda-cor.sem-entrada {
+    background: rgba(0,0,0,0.06);
+}
+
+.legenda-cor.hoje {
+    background: var(--accent);
+}
+
+.lembrete-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+.lembrete-item:last-child {
+    margin-bottom: 0;
+}
+
+.lembrete-item i {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.lembrete-hora {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.chart-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.sentimento-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.chart-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.chart-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #764ba2);
+    border-radius: 6px;
+}
+
+.chart-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    min-width: 80px;
+    text-align: right;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .calendario-container {
+        grid-template-columns: 1fr;
+    }
+
+    .calendario-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendario-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .calendario-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .dias-grid {
+        gap: 0.25rem;
+    }
+
+    .dia-cell {
+        font-size: 0.8rem;
+        padding: 0.25rem;
+    }
+}
+</style>
+
+<script>
+let mesAtual = new Date();
+
+function atualizarCalendario() {
+    const ano = mesAtual.getFullYear();
+    const mes = mesAtual.getMonth();
+    
+    // Atualizar header
+    const opcoes = { month: 'long', year: 'numeric' };
+    document.getElementById('mes-ano').textContent = 
+        mesAtual.toLocaleDateString('pt-BR', opcoes);
+    
+    // Criar calendário
+    const grid = document.getElementById('calendario-grid');
+    grid.innerHTML = '';
+    
+    // Primeiro dia do mês
+    const primeirodia = new Date(ano, mes, 1);
+    const ultimodia = new Date(ano, mes + 1, 0);
+    const diasAnterior = primeirodia.getDay();
+    
+    // Dias do mês anterior
+    for (let i = diasAnterior - 1; i >= 0; i--) {
+        const dia = new Date(primeirodia);
+        dia.setDate(dia.getDate() - (i + 1));
+        adicionarDiaCell(grid, dia, true);
+    }
+    
+    // Dias do mês atual
+    for (let dia = 1; dia <= ultimodia.getDate(); dia++) {
+        const data = new Date(ano, mes, dia);
+        adicionarDiaCell(grid, data, false);
+    }
+    
+    // Dias do próximo mês
+    const diasRestantes = 42 - grid.children.length;
+    for (let dia = 1; dia <= diasRestantes; dia++) {
+        const data = new Date(ano, mes + 1, dia);
+        adicionarDiaCell(grid, data, true);
+    }
+}
+
+function adicionarDiaCell(grid, data, outroMes) {
+    const cell = document.createElement('div');
+    cell.className = 'dia-cell';
+    
+    if (outroMes) {
+        cell.classList.add('outro-mes');
+    } else {
+        const hoje = new Date();
+        const ehHoje = data.getDate() === hoje.getDate() && 
+                      data.getMonth() === hoje.getMonth() && 
+                      data.getFullYear() === hoje.getFullYear();
+        
+        if (ehHoje) {
+            cell.classList.add('hoje');
+        } else if (Math.random() > 0.5) {
+            // Simular entradas
+            if (Math.random() > 0.3) {
+                cell.classList.add('com-entrada');
+            }
+        }
+        
+        // Simular sequência de 7 dias
+        if (data.getDate() >= 1 && data.getDate() <= 7) {
+            cell.classList.add('sequencia');
+        }
+        
+        cell.style.cursor = 'pointer';
+        cell.addEventListener('click', () => abrirDiaDetalhes(data));
+    }
+    
+    cell.textContent = data.getDate();
+    grid.appendChild(cell);
+}
+
+function mesAnterior() {
+    mesAtual.setMonth(mesAtual.getMonth() - 1);
+    atualizarCalendario();
+}
+
+function proxMes() {
+    mesAtual.setMonth(mesAtual.getMonth() + 1);
+    atualizarCalendario();
+}
+
+function abrirDiaDetalhes(data) {
+    const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dataStr = data.toLocaleDateString('pt-BR', opcoes);
+    
+    document.getElementById('modal-dia-title').textContent = dataStr;
+    document.getElementById('modal-dia-content').innerHTML = `
+        <div style="padding: 1rem 0;">
+            <h3 style="margin-top: 0;">Entrada do Diário</h3>
+            <p style="background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 8px; line-height: 1.6;">
+                Hoje foi um dia produtivo. Completei alguns projetos importantes e senti-me motivado durante todo o dia.
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <p><strong>Emoções:</strong> 😊 Feliz, 🔥 Motivado</p>
+                <p><strong>Habilidades:</strong> 💪 Exercício, 📚 Leitura</p>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('dia-modal').classList.add('active');
+}
+
+function fecharDiaModal() {
+    document.getElementById('dia-modal').classList.remove('active');
+}
+
+// Inicializar calendário
+atualizarCalendario();
+</script>
+{% endblock %}
